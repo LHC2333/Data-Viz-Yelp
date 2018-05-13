@@ -107,7 +107,7 @@ plot.circle(x = 'x',
 plot1 = figure(title="Overall Rating within this Area",tools="save",plot_width = plot.plot_width,
                plot_height = 350,background_fill_color="white")
 
-plot1.vbar(x='x1', width=0.3, bottom=0,top='y1', color='blue', source = source1)
+plot1.vbar(x='x1', width=0.3, bottom=0,top='y1', color='firebrick', source = source1)
 
 labels = LabelSet(x='x1', y='y1',text = 'y1',x_offset=-13.5,level = 'glyph', source=source1, render_mode='canvas')
 plot1.add_layout(labels)
