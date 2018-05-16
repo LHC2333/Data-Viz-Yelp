@@ -37,6 +37,14 @@ hover = HoverTool(tooltips=[('Name','@name'),
                             ('Rating', '@rating'),
 							('Currently Opening','@status')
 							])
+
+hover_bar = HoverTool(tooltips=[('Rating','@x1'),
+                                ('Number of Business','@y1')
+							])
+
+hover_pie = HoverTool(tooltips=[('Percentage','@ratio')
+							])
+
 select_day = Select(
                 options=['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday','Friday','Saturday'],
                 value='Monday',
@@ -88,6 +96,7 @@ great = histo_source[4.0]+histo_source[4.5]+histo_source[5.0]
 ratio1 = great/total
 
 pie_source1 = ColumnDataSource(data={
+                            'ratio':[ratio1, 1-ratio1],
                             'start':[0, ratio1*2*pi],
                             'end': [ratio1*2*pi, 2*pi],
                             'color': ['yellow', 'blue']
@@ -114,18 +123,22 @@ plot = figure(title='Yelp Rating',
 
 plot.circle(x = 'x',
             y = 'y',
-            fill_alpha=0.8,
+            fill_alpha=0.7,
             source=source,
             color = {'field':'rating','transform': mapper},
             legend='rating'
             )
 
-bar1 = figure(title="Overall Rating within this Area",tools="save",plot_width = plot.plot_width,
-               plot_height = 400,background_fill_color="white")
+bar1 = figure(title="Overall Rating within this Area",
+              tools = [hover_bar,SaveTool()],
+              plot_width = plot.plot_width,
+              plot_height = 400,background_fill_color="white")
 
 bar1.vbar(x='x1', width=0.3, bottom=0,top='y1', color='firebrick', source = source1)
 
-labels = LabelSet(x='x1', y='y1',text = 'y1',x_offset=-13.5,level = 'glyph', source=source1, render_mode='canvas')
+labels = LabelSet(x='x1', y='y1',text = 'y1',
+                  x_offset=-13.5,level = 'glyph',
+                  source=source1, render_mode='canvas')
 bar1.add_layout(labels)
 
 plot.patches(state_xs, state_ys, fill_alpha=0.0,
@@ -135,8 +148,12 @@ plot.patches(state_xs, state_ys, fill_alpha=0.0,
 plot.title.text_font_size = '16pt'
 plot.title.align = 'left'
 
-pie1 = figure(title = 'Percentage of 4 Stars and above in this category', plot_width = plot.plot_width,plot_height = 400)
-pie1.wedge(x=0, y=0, start_angle='start', end_angle='end', radius=0.8,
+pie1 = figure(title = 'Percentage of 4 Stars and above in this category',
+              plot_width = plot.plot_width,
+              plot_height = 400,
+              tools = [hover_pie,SaveTool()])
+
+pie1.wedge(x=0, y=0, start_angle='start', end_angle='end', radius=0.7,
         color='color', alpha=0.6, source=pie_source1)
 
 #defining the update function
@@ -176,6 +193,7 @@ def update_value(attr, old, new):
     update_data2 ={
                     'start':[0, ratio12*2*pi],
                     'end':[ratio12*2*pi, 2*pi],
+                    'ratio':[ratio12, 1-ratio12],
                     'color':['yellow', 'blue']
     }
 
@@ -201,6 +219,6 @@ slider.on_change('value', update_value)
 search.on_change('value', update_value)
 #hover.on_change('value',update_value)
 
-layout = row(widgetbox(text,slider,search,select_day), row(column(plot,bar1,pie1)))
+layout = row(widgetbox(text,slider,search,select_day), column(plot,row(bar1,pie1)))
 curdoc().add_root(layout)
 curdoc().title = "Yelp Rate in US"
