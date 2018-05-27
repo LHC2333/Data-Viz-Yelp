@@ -1,13 +1,12 @@
 #libraies
-import numpy as np
+from math import pi
 import pandas as pd
 from collections import Counter
 from bokeh.plotting import figure
 from bokeh.layouts import widgetbox,row,column
 from bokeh.models import (ColumnDataSource,HoverTool,ResetTool,
                          UndoTool,RedoTool,ZoomInTool,ZoomOutTool,
-                         WheelZoomTool,LassoSelectTool,BoxSelectTool,
-                         SaveTool,PanTool,CategoricalColorMapper,
+                         BoxSelectTool, SaveTool,PanTool,CategoricalColorMapper,
                          Spacer,LabelSet,LinearAxis)
 from bokeh.models.widgets import Select,RangeSlider,TextInput
 from bokeh.palettes import RdYlGn
@@ -27,12 +26,12 @@ state_ys = [states[code]["lats"] for code in states]
 
 text = TextInput(title="Input Abbreviation of State you want to search, ex: NY(New York)")
 search = TextInput(title="Type the Category you want to search")
-slider = RangeSlider(start=0,end=24,step=1,value=(8,23),title='Hours')
 hover = HoverTool(tooltips=[('Name','@name'),
                             ('Address','@address'),
                             ('Rating', '@rating'),
-							('Currently Opening','@status')
-							])
+			    ('Currently Opening','@status')
+			    ])
+
 select_day = Select(
                 options=['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday','Friday','Saturday'],
                 value='Monday',
@@ -169,6 +168,6 @@ slider.on_change('value', update_value)
 search.on_change('value', update_value)
 #hover.on_change('value',update_value)
 
-layout = row(widgetbox(text,slider,search,select_day), column(plot,plot1))
+layout = row(widgetbox(text,search,select_day), column(plot,plot1))
 curdoc().add_root(layout)
 curdoc().title = "Yelp Rate in US"
